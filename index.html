@@ -5,6 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Anandhan Kannan's Profile</title>
   <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flow Chart</title>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <style>
+      .link line {
+          stroke: #aaa;
+      }
+      .node circle {
+          fill: steelblue;
+      }
+      .node text {
+          font-size: 12px;
+          fill: #fff;
+      }
+  </style>
 </head>
 <body>
   <header>
@@ -49,5 +65,53 @@
     <h2>Contact</h2>
     <p>Email: anandhan.kannan@gmail.com</p>
   </section>
+  <svg id="flowchart" width="800" height="600"></svg>
+  <script>
+      // JavaScript code for D3.js flowchart
+      const nodes = [
+          { id: "Start" },
+          { id: "Step 1" },
+          { id: "Step 2" },
+          { id: "End" }
+      ];
+      const links = [
+          { source: "Start", target: "Step 1" },
+          { source: "Step 1", target: "Step 2" },
+          { source: "Step 2", target: "End" }
+      ];
+
+      const svg = d3.select("#flowchart");
+      const simulation = d3.forceSimulation(nodes)
+          .force("link", d3.forceLink(links).id(d => d.id).distance(100))
+          .force("charge", d3.forceManyBody().strength(-400))
+          .force("center", d3.forceCenter(400, 300));
+
+      const link = svg.append("g")
+          .attr("class", "links")
+          .selectAll("line")
+          .data(links)
+          .enter()
+          .append("line")
+          .attr("stroke-width", 2);
+
+      const node = svg.append("g")
+          .attr("class", "nodes")
+          .selectAll("circle")
+          .data(nodes)
+          .enter()
+          .append("circle")
+          .attr("r", 20)
+          .attr("fill", "steelblue");
+
+      simulation.on("tick", () => {
+          link.attr("x1", d => d.source.x)
+              .attr("y1", d => d.source.y)
+              .attr("x2", d => d.target.x)
+              .attr("y2", d => d.target.y);
+
+          node.attr("cx", d => d.x)
+              .attr("cy", d => d.y);
+      });
+  </script>
 </body>
 </html>
